@@ -38,6 +38,7 @@ fetch(`https://api.themoviedb.org/3/movie/popular?api_key=039e4f7f61c4c831908c02
       let img = document.createElement("img");
       img.className = "poster";
       img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
+      img.alt = data.results[i].title;
       let divMovieFooter = document.createElement("div");
       divMovieFooter.className = "movie-footer";
       let footerTitle = document.createElement("div");
@@ -82,6 +83,7 @@ function nextPage() {
       let img = document.createElement("img");
       img.className = "poster";
       img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
+      img.alt = data.results[i].title;
       let divMovieFooter = document.createElement("div");
       divMovieFooter.className = "movie-footer";
       let footerTitle = document.createElement("div");
@@ -117,6 +119,7 @@ function previousPage() {
       let img = document.createElement("img");
       img.className = "poster";
       img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
+      img.alt = data.results[i].title;
       let divMovieFooter = document.createElement("div");
       divMovieFooter.className = "movie-footer";
       let footerTitle = document.createElement("div");
