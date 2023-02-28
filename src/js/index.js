@@ -1,7 +1,6 @@
 let page = 1;
 let genre = 0;
-console.log(page);
-let idMovie = 0;
+let content = "movies";
 
 function getMovieList() {
   getGenres();
@@ -10,7 +9,7 @@ function getMovieList() {
     .then(response => {
       return response.json();
     })
-    .then(data => { //Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+    .then(data => {//Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
       for (let i = 0; i < data.results.length; i++) {
         // let li = document.createElement("li");
         // li.innerText = data.results[i].title;
@@ -32,7 +31,6 @@ function getMovieList() {
         divMovieFooter.appendChild(footerTitle);
         divMovie.appendChild(img);
         divMovie.appendChild(divMovieFooter);
-
         list.appendChild(divMovie);
       }
     })
@@ -76,6 +74,97 @@ function getMovieList() {
     }
 }
 
+function getSeriesList() {
+  getSeriesGenres();
+  if (genre == 0) {
+    fetch(`https://api.themoviedb.org/3/discover/tv?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&sort_by=popularity.desc&include_adult=false&include_video=false&page=${+page}`)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => { //Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+      for (let i = 0; i < data.results.length; i++) {
+        // let li = document.createElement("li");
+        // li.innerText = data.results[i].title;
+        let divMovie = document.createElement("div");
+        divMovie.className = "movie";
+        divMovie.id = data.results[i].id;
+        // divMovie.onclick = function() {
+        //   showMovieInfo(data.results[i].id);
+        // };
+        let img = document.createElement("img");
+        img.className = "poster";
+        img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
+        img.alt = data.results[i].title;
+        let divMovieFooter = document.createElement("div");
+        divMovieFooter.className = "movie-footer";
+        let footerTitle = document.createElement("div");
+        footerTitle.className = "title";
+        footerTitle.innerText = data.results[i].original_name;
+        divMovieFooter.appendChild(footerTitle);
+        divMovie.appendChild(img);
+        divMovie.appendChild(divMovieFooter);
+        list.appendChild(divMovie);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+    } else {
+      fetch(`https://api.themoviedb.org/3/discover/tv?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&sort_by=popularity.desc&include_adult=false&include_video=false&page=${+page}&with_genres=${+genre}`)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => { //Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+      for (let i = 0; i < data.results.length; i++) {
+        // let li = document.createElement("li");
+        // li.innerText = data.results[i].title;
+        let divMovie = document.createElement("div");
+        divMovie.className = "movie";
+        divMovie.id = data.results[i].id;
+        divMovie.onclick = function() {
+          showMovieInfo(data.results[i].id);
+        };
+        let img = document.createElement("img");
+        img.className = "poster";
+        img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
+        img.alt = data.results[i].title;
+        let divMovieFooter = document.createElement("div");
+        divMovieFooter.className = "movie-footer";
+        let footerTitle = document.createElement("div");
+        footerTitle.className = "title";
+        footerTitle.innerText = data.results[i].title;
+        divMovieFooter.appendChild(footerTitle);
+        divMovie.appendChild(img);
+        divMovie.appendChild(divMovieFooter);
+
+        list.appendChild(divMovie);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+    }
+}
+
+function getSeriesGenres() {
+  fetch(`https://api.themoviedb.org/3/genre/tv/list?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
+  .then(response => {
+    return response.json();
+  })
+  .then(data => { //Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+    for (let i = 0; i < data.genres.length; i++) {
+      let genreFilter = document.getElementById("genre-filter");
+      let genre = document.createElement("option");
+      genre.value = data.genres[i].id;
+      genre.innerText = data.genres[i].name;
+      genreFilter.appendChild(genre);
+    }
+  })
+  .catch(error => {
+    console.error(error);
+  });
+}
+
 //Petición a la api para añadir los options al select que filtrará por género
 function getGenres() {
   fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
@@ -102,7 +191,7 @@ window.onload = getMovieList;
 
 function showMovieInfo(idMovie) {
   let container = document.getElementById("container");
-  container.innerHTML = "<div onclick='returnToList()'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
+  container.innerHTML = "<div onclick='location.reload();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
   let movieTitle = document.getElementById("movie-title");
   
   fetch(`https://api.themoviedb.org/3/movie/${idMovie}?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
@@ -110,7 +199,6 @@ function showMovieInfo(idMovie) {
     return response.json();
   })
   .then(data => {
-    console.log(data.title);
     movieTitle.innerText = data.title;
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
@@ -126,6 +214,7 @@ function showMovieInfo(idMovie) {
 
 function returnToList() {
   genre = 0;
+  page = 1;
   let container = document.getElementById("container");
   container.innerHTML = `<select name="Filtro por género" id="genre-filter" onchange="genreFilter()">
   <option value="0">Selecciona un género</option>
@@ -135,7 +224,6 @@ function returnToList() {
   <div id="movie-list">
 
   </div>
-  <!-- <div id="previous" onclick="previousPage()">Página anterior</div> -->
   <div id="show-more" onclick="showMore()">Mostrar más</div>`;
   // getGenres();
   getMovieList();
@@ -263,7 +351,34 @@ function genreFilter() {
   page = 1;
   genre = document.getElementById("genre-filter").value;
   list.innerHTML = "";
+  if (content === "movies") {
+    getMovieList();
+  } else {
+    getSeriesList();
+  }
+}
+
+function switchToMovies() {
+  page = 1;
+  genre = 0;
+  content = "movies";
+  let h1 = document.getElementsByTagName("h1")[0];
+  h1.innerText = "Películas";
+  list.innerHTML = "";
+  let defaultOption = document.querySelector("#genre-filter > option");
+  defaultOption.selected = true;
   getMovieList();
 }
 
+function switchToSeries() {
+  page = 1;
+  genre = 0;
+  content = "series";
+  let h1 = document.getElementsByTagName("h1")[0];
+  h1.innerText = "Series";
+  list.innerHTML = "";
+  let defaultOption = document.querySelector("#genre-filter > option");
+  defaultOption.selected = true;
+  getSeriesList();
+}
 // export { idMovie };
