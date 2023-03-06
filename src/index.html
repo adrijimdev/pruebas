@@ -4,28 +4,29 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CHILLAX</title>
+  <title>Catálogo</title>
   <link rel="stylesheet" href="./css/index.css">
   <script defer src="./js/index.js"></script>
 </head>
 <body>
+<h1>Catálogo</h1>
   <div id="container">
-    <select name="Filtro por género" id="genre-filter" onchange="genreFilter()">
-      <option value="0">Selecciona un género</option>
-    </select>
-    <nav>
-      <ul>
-        <li onclick="switchToMovies()">Películas</li>
-        <li onclick="switchToSeries()">Series</li>
-      </ul>
-    </nav>
-    <h1>Películas</h1>
-    <hr>
-    <div id="movie-list">
+    <div id="movies">
+        <h2>Películas</h2>
+        <hr>
+        <div id="movie-list">
 
+        </div>
+        <div class="show-more" onclick="redirectToMovies()">Mostrar más películas</div>
     </div>
-    <!-- <div id="previous" onclick="previousPage()">Página anterior</div> -->
-    <div id="show-more" onclick="showMore()">Mostrar más</div>
+    <div id="series">
+        <h2>Películas</h2>
+        <hr>
+        <div id="series-list">
+
+        </div>
+        <div class="show-more" onclick="redirectToSeries()">Mostrar más series</div>
+    </div>
   </div>
   
 </body>
