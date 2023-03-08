@@ -16,9 +16,6 @@ function getMovies() {
         let divMovie = document.createElement("div");
         divMovie.className = "movie";
         divMovie.id = data.results[i].id;
-        divMovie.onclick = function() {
-          showMovieInfo(data.results[i].id);
-        };
         let img = document.createElement("img");
         img.className = "poster";
         img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;

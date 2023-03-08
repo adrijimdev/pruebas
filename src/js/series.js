@@ -1,5 +1,6 @@
 let page = 1;
 let genre = 0;
+let list = document.getElementById("series-list");
 
 function getSeriesList() {
   getSeriesGenres();
@@ -8,22 +9,20 @@ function getSeriesList() {
     .then(response => {
       return response.json();
     })
-    .then(data => { //Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+    .then(data => {//Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
       for (let i = 0; i < data.results.length; i++) {
-        // let li = document.createElement("li");
-        // li.innerText = data.results[i].title;
         let divSerie = document.createElement("div");
-        divSerie.className = "movie";
+        divSerie.className = "serie";
         divSerie.id = data.results[i].id;
-        // divMovie.onclick = function() {
-        //   showMovieInfo(data.results[i].id);
-        // };
+        divSerie.onclick = function() {
+          showSerieInfo(data.results[i].id);
+        };
         let img = document.createElement("img");
         img.className = "poster";
         img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
         img.alt = data.results[i].title;
         let divSerieFooter = document.createElement("div");
-        divSerieFooter.className = "movie-footer";
+        divSerieFooter.className = "serie-footer";
         let footerTitle = document.createElement("div");
         footerTitle.className = "title";
         footerTitle.innerText = data.results[i].original_name;
@@ -41,36 +40,33 @@ function getSeriesList() {
     .then(response => {
       return response.json();
     })
-    .then(data => { //Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+    .then(data => {//Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
       for (let i = 0; i < data.results.length; i++) {
-        // let li = document.createElement("li");
-        // li.innerText = data.results[i].title;
         let divSerie = document.createElement("div");
-        divSerie.className = "movie";
+        divSerie.className = "serie";
         divSerie.id = data.results[i].id;
         divSerie.onclick = function() {
-          showMovieInfo(data.results[i].id);
+          showSerieInfo(data.results[i].id);
         };
         let img = document.createElement("img");
         img.className = "poster";
         img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
         img.alt = data.results[i].title;
         let divSerieFooter = document.createElement("div");
-        divSerieFooter.className = "movie-footer";
+        divSerieFooter.className = "serie-footer";
         let footerTitle = document.createElement("div");
         footerTitle.className = "title";
         footerTitle.innerText = data.results[i].original_name;
         divSerieFooter.appendChild(footerTitle);
         divSerie.appendChild(img);
         divSerie.appendChild(divSerieFooter);
-
         list.appendChild(divSerie);
       }
     })
     .catch(error => {
       console.error(error);
     });
-  }
+    }
 }
 
 function getSeriesGenres() {
@@ -97,7 +93,6 @@ window.onload = getSeriesList;
  //PÁGINA DE PELÍCULA/SERIE/JUEGO/LIBRO. 550 deberá cambiarse por la id de la película sobre la que se haga click en la web. Adaptar código a necesidades
 
 function showSerieInfo(idSerie) {
-  console.log(idSerie);
   let container = document.getElementById("container");
   container.innerHTML = "<div onclick='location.reload();'>Series\n</div><h1 id='serie-title'></h1>\n<hr>";
   let serieTitle = document.getElementById("serie-title");
@@ -107,13 +102,36 @@ function showSerieInfo(idSerie) {
     return response.json();
   })
   .then(data => {
-    serieTitle.innerText = data.title;
+    serieTitle.innerText = data.original_name;
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
     cover.setAttribute('alt', `Portada de ${data.original_name}`);
-    // let overview = document.getElementById("overview");
-    // overview.innerText = data.overview;
+    let additionalInfo = document.createElement("div");
+    additionalInfo.className = "additional-info";
+    let releaseDate = document.createElement("div");
+    releaseDate.className = "release-date";
+    releaseDate.innerText = `Primera emisión: ${data.first_air_date}`;
+    additionalInfo.appendChild(releaseDate);
+    let runtime = document.createElement("div");
+    runtime.innerText = `Duración aproximada episodio: ${data.episode_run_time} minutos`;
+    additionalInfo.appendChild(runtime);
+    let genres = document.createElement("div");
+    genres.className = "genres";
+    genres.innerText = "Género/s: ";
+    for (let i = 0; i < data.genres.length; i++) {
+      if (i < data.genres.length - 1) {
+        genres.innerText += `${data.genres[i].name}, `;
+      } else {
+        genres.innerText += `${data.genres[i].name}`;
+      }
+    }
+    additionalInfo.appendChild(genres);
+    let overview = document.createElement("div");
+    overview.className = "sinopsis";
+    overview.innerText = data.overview;
     container.appendChild(cover);
+    container.appendChild(additionalInfo);
+    container.appendChild(overview);
   })
   .catch(error => {
     console.error(error);
@@ -138,7 +156,7 @@ function returnToList() {
   getMovieList();
 }
 // let ul = document.getElementById("movie-list");
-let list = document.getElementById("series-list");
+
 
 //PARA PAGINAR LISTA DE PELÍCULAS
 // let prev = document.getElementById("previous");

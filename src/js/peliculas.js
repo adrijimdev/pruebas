@@ -1,6 +1,6 @@
 let page = 1;
 let genre = 0;
-let content = "movies";
+let list = document.getElementById("movie-list");
 
 function getMovieList() {
   getGenres();
@@ -117,28 +117,51 @@ window.onload = getMovieList;
  
  //PÁGINA DE PELÍCULA/SERIE/JUEGO/LIBRO. 550 deberá cambiarse por la id de la película sobre la que se haga click en la web. Adaptar código a necesidades
 
-// function showMovieInfo(idMovie) {
-//   let container = document.getElementById("container");
-//   container.innerHTML = "<div onclick='location.reload();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
-//   let movieTitle = document.getElementById("movie-title");
+function showMovieInfo(idMovie) {
+  let container = document.getElementById("container");
+  container.innerHTML = "<div onclick='location.reload();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
+  let movieTitle = document.getElementById("movie-title");
   
-//   fetch(`https://api.themoviedb.org/3/movie/${idMovie}?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
-//   .then(response => {
-//     return response.json();
-//   })
-//   .then(data => {
-//     movieTitle.innerText = data.title;
-//     let cover = document.createElement("img");
-//     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
-//     cover.setAttribute('alt', `Portada de ${data.title}`);
-//     // let overview = document.getElementById("overview");
-//     // overview.innerText = data.overview;
-//     container.appendChild(cover);
-//   })
-//   .catch(error => {
-//     console.error(error);
-//   });
-// }
+  fetch(`https://api.themoviedb.org/3/movie/${idMovie}?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
+  .then(response => {
+    return response.json();
+  })
+  .then(data => {
+    movieTitle.innerText = data.title;
+    let cover = document.createElement("img");
+    cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
+    cover.setAttribute('alt', `Portada de ${data.title}`);
+    let additionalInfo = document.createElement("div");
+    additionalInfo.className = "additional-info";
+    let releaseDate = document.createElement("div");
+    releaseDate.className = "release-date";
+    releaseDate.innerText = `Fecha de estreno: ${data.release_date}`;
+    additionalInfo.appendChild(releaseDate);
+    let runtime = document.createElement("div");
+    runtime.innerText = `Duración: ${data.runtime} minutos`;
+    additionalInfo.appendChild(runtime);
+    let genres = document.createElement("div");
+    genres.className = "genres";
+    genres.innerText = "Género/s: ";
+    for (let i = 0; i < data.genres.length; i++) {
+      if (i < data.genres.length - 1) {
+        genres.innerText += `${data.genres[i].name}, `;
+      } else {
+        genres.innerText += `${data.genres[i].name}`;
+      }
+    }
+    additionalInfo.appendChild(genres);
+    let overview = document.createElement("div");
+    overview.className = "sinopsis";
+    overview.innerText = data.overview;
+    container.appendChild(cover);
+    container.appendChild(additionalInfo);
+    container.appendChild(overview);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+}
 
 function returnToList() {
   genre = 0;
@@ -156,8 +179,6 @@ function returnToList() {
   // getGenres();
   getMovieList();
 }
-// let ul = document.getElementById("movie-list");
-let list = document.getElementById("movie-list");
 
 //PARA PAGINAR LISTA DE PELÍCULAS
 // let prev = document.getElementById("previous");
