@@ -1,9 +1,10 @@
 let page = 1;
 let genre = 0;
-let list = document.getElementById("series-list");
+let search = "";
 
 function getSeriesList() {
   getSeriesGenres();
+  let list = document.getElementById("series-list");
   if (genre == 0) {
     fetch(`https://api.themoviedb.org/3/discover/tv?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&sort_by=popularity.desc&include_adult=false&include_video=false&page=${+page}`)
     .then(response => {
@@ -94,7 +95,7 @@ window.onload = getSeriesList;
 
 function showSerieInfo(idSerie) {
   let container = document.getElementById("container");
-  container.innerHTML = "<div onclick='location.reload();'>Series\n</div><h1 id='serie-title'></h1>\n<hr>";
+  container.innerHTML = "<div onclick='returnToList();'>Series\n</div><h1 id='serie-title'></h1>\n<hr>";
   let serieTitle = document.getElementById("serie-title");
   
   fetch(`https://api.themoviedb.org/3/tv/${idSerie}?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
@@ -108,14 +109,14 @@ function showSerieInfo(idSerie) {
     cover.setAttribute('alt', `Portada de ${data.original_name}`);
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
-    let releaseDate = document.createElement("div");
+    let releaseDate = document.createElement("p");
     releaseDate.className = "release-date";
     releaseDate.innerText = `Primera emisión: ${data.first_air_date}`;
     additionalInfo.appendChild(releaseDate);
-    let runtime = document.createElement("div");
+    let runtime = document.createElement("p");
     runtime.innerText = `Duración aproximada episodio: ${data.episode_run_time} minutos`;
     additionalInfo.appendChild(runtime);
-    let genres = document.createElement("div");
+    let genres = document.createElement("p");
     genres.className = "genres";
     genres.innerText = "Género/s: ";
     for (let i = 0; i < data.genres.length; i++) {
@@ -135,25 +136,24 @@ function showSerieInfo(idSerie) {
   })
   .catch(error => {
     console.error(error);
-  });
+  });  
 }
 
-//En desuso actualmente
 function returnToList() {
-  genre = 0;
   page = 1;
   let container = document.getElementById("container");
   container.innerHTML = `<select name="Filtro por género" id="genre-filter" onchange="genreFilter()">
   <option value="0">Selecciona un género</option>
+  <option value="0">Todos</option>
   </select>
-  <h1>Películas</h1>
+  <h1>Series</h1>
   <hr>
-  <div id="movie-list">
+  <div id="series-list">
 
   </div>
   <div id="show-more" onclick="showMore()">Mostrar más</div>`;
   // getGenres();
-  getMovieList();
+  getSeriesList();
 }
 // let ul = document.getElementById("movie-list");
 
@@ -173,8 +173,14 @@ function returnToList() {
 //Esta función incrementa en 1 el valor de page, realizando una petición a la página siguiente de la api
 function showMore() {
   page++;
-  getSeriesList();
+  let searchValue = document.getElementById("search").value;
+  if (searchValue !== "") {
+    searchSerie();
+  } else {
+    getSeriesList();
+  }  
 }
+
 
 //Esta función disminuye en 1 el valor de page, realizando una petición a la página anterior de la api
 // function previousPage() {
@@ -238,25 +244,47 @@ function showMore() {
 
 function genreFilter() {
   page = 1;
+  let list = document.getElementById("series-list");
   genre = document.getElementById("genre-filter").value;
   list.innerHTML = "";
   getSeriesList();
 }
 
-function switchToMovies() {
-  // page = 1;
-  // genre = 0;
-  // content = "movies";
-  // // let seriesGenreFilter = document.getElementById("genre-series-filter");
-  // // seriesGenreFilter.style.visibility = "hidden";
-  // // let movieGenreFilter = document.getElementById("genre-filter");
-  // // movieGenreFilter.style.visibility = "visible";
-  // let h1 = document.getElementsByTagName("h1")[0];
-  // h1.innerText = "Películas";
-  // list.innerHTML = "";
-  // let defaultOption = document.querySelector("#genre-filter > option");
-  // defaultOption.selected = true;
-  // getMovieList();
-  location.href = "../index.html";
+function searchSerie() {
+  if (search === "") {
+    page = 1;
+  }
+  let list = document.getElementById("series-list");
+  list.innerHTML = "";
+  search = document.getElementById("search").value;
+  fetch(`https://api.themoviedb.org/3/search/tv?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&query=${search}&page=${page}&include_adult=false`)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {//Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+      for (let i = 0; i < data.results.length; i++) {
+        let divSerie = document.createElement("div");
+        divSerie.className = "serie";
+        divSerie.id = data.results[i].id;
+        divSerie.onclick = function() {
+          showSerieInfo(data.results[i].id);
+        };
+        let img = document.createElement("img");
+        img.className = "poster";
+        img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
+        img.alt = data.results[i].title;
+        let divSerieFooter = document.createElement("div");
+        divSerieFooter.className = "serie-footer";
+        let footerTitle = document.createElement("div");
+        footerTitle.className = "title";
+        footerTitle.innerText = data.results[i].original_name;
+        divSerieFooter.appendChild(footerTitle);
+        divSerie.appendChild(img);
+        divSerie.appendChild(divSerieFooter);
+        list.appendChild(divSerie);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
 }
-// export { idMovie };

@@ -1,8 +1,8 @@
 let page = 1;
 let genre = 0;
-let list = document.getElementById("movie-list");
 
 function getMovieList() {
+  let list = document.getElementById("movie-list");
   getGenres();
   if (genre == 0) {
     fetch(`https://api.themoviedb.org/3/discover/movie?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&sort_by=popularity.desc&include_adult=false&include_video=false&page=${+page}`)
@@ -119,7 +119,7 @@ window.onload = getMovieList;
 
 function showMovieInfo(idMovie) {
   let container = document.getElementById("container");
-  container.innerHTML = "<div onclick='location.reload();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
+  container.innerHTML = "<div onclick='returnToList();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
   let movieTitle = document.getElementById("movie-title");
   
   fetch(`https://api.themoviedb.org/3/movie/${idMovie}?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
@@ -133,14 +133,14 @@ function showMovieInfo(idMovie) {
     cover.setAttribute('alt', `Portada de ${data.title}`);
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
-    let releaseDate = document.createElement("div");
+    let releaseDate = document.createElement("p");
     releaseDate.className = "release-date";
     releaseDate.innerText = `Fecha de estreno: ${data.release_date}`;
     additionalInfo.appendChild(releaseDate);
-    let runtime = document.createElement("div");
+    let runtime = document.createElement("p");
     runtime.innerText = `Duración: ${data.runtime} minutos`;
     additionalInfo.appendChild(runtime);
-    let genres = document.createElement("div");
+    let genres = document.createElement("p");
     genres.className = "genres";
     genres.innerText = "Género/s: ";
     for (let i = 0; i < data.genres.length; i++) {
@@ -164,11 +164,11 @@ function showMovieInfo(idMovie) {
 }
 
 function returnToList() {
-  genre = 0;
   page = 1;
   let container = document.getElementById("container");
   container.innerHTML = `<select name="Filtro por género" id="genre-filter" onchange="genreFilter()">
   <option value="0">Selecciona un género</option>
+  <option value="0">Todos</option>
   </select>
   <h1>Películas</h1>
   <hr>
@@ -195,11 +195,7 @@ function returnToList() {
 //Esta función incrementa en 1 el valor de page, realizando una petición a la página siguiente de la api
 function showMore() {
   page++;
-  if (content === "movies") {
-    getMovieList();
-  } else {
-    getSeriesList();
-  }
+  getMovieList();
 }
 
 //Esta función disminuye en 1 el valor de page, realizando una petición a la página anterior de la api
@@ -264,32 +260,9 @@ function showMore() {
 
 function genreFilter() {
   page = 1;
+  let list = document.getElementById("movie-list");
   genre = document.getElementById("genre-filter").value;
   list.innerHTML = "";
-  if (content === "movies") {
-    getMovieList();
-  } else {
-    getSeriesList();
-  }
-}
-
-function switchToMovies() {
-  page = 1;
-  genre = 0;
-  content = "movies";
-  // let seriesGenreFilter = document.getElementById("genre-series-filter");
-  // seriesGenreFilter.style.visibility = "hidden";
-  // let movieGenreFilter = document.getElementById("genre-filter");
-  // movieGenreFilter.style.visibility = "visible";
-  let h1 = document.getElementsByTagName("h1")[0];
-  h1.innerText = "Películas";
-  list.innerHTML = "";
-  let defaultOption = document.querySelector("#genre-filter > option");
-  defaultOption.selected = true;
   getMovieList();
-}
-
-function switchToSeries() {
-  location.href = "../series.html";
 }
 // export { idMovie };
