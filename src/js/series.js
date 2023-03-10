@@ -26,7 +26,7 @@ function getSeriesList() {
         divSerieFooter.className = "serie-footer";
         let footerTitle = document.createElement("div");
         footerTitle.className = "title";
-        footerTitle.innerText = data.results[i].original_name;
+        footerTitle.innerText = data.results[i].name;
         divSerieFooter.appendChild(footerTitle);
         divSerie.appendChild(img);
         divSerie.appendChild(divSerieFooter);
@@ -57,7 +57,7 @@ function getSeriesList() {
         divSerieFooter.className = "serie-footer";
         let footerTitle = document.createElement("div");
         footerTitle.className = "title";
-        footerTitle.innerText = data.results[i].original_name;
+        footerTitle.innerText = data.results[i].name;
         divSerieFooter.appendChild(footerTitle);
         divSerie.appendChild(img);
         divSerie.appendChild(divSerieFooter);
@@ -103,10 +103,10 @@ function showSerieInfo(idSerie) {
     return response.json();
   })
   .then(data => {
-    serieTitle.innerText = data.original_name;
+    serieTitle.innerText = data.name;
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
-    cover.setAttribute('alt', `Portada de ${data.original_name}`);
+    cover.setAttribute('alt', `Portada de ${data.name}`);
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
     let releaseDate = document.createElement("p");
@@ -277,7 +277,7 @@ function searchSerie() {
         divSerieFooter.className = "serie-footer";
         let footerTitle = document.createElement("div");
         footerTitle.className = "title";
-        footerTitle.innerText = data.results[i].original_name;
+        footerTitle.innerText = data.results[i].name;
         divSerieFooter.appendChild(footerTitle);
         divSerie.appendChild(img);
         divSerie.appendChild(divSerieFooter);
