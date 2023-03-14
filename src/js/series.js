@@ -3,8 +3,8 @@ let genre = 0;
 let search = "";
 
 function getSeriesList() {
-  getSeriesGenres();
   let list = document.getElementById("series-list");
+  getSeriesGenres();
   if (genre == 0) {
     fetch(`https://api.themoviedb.org/3/discover/tv?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&sort_by=popularity.desc&include_adult=false&include_video=false&page=${+page}`)
     .then(response => {
@@ -95,6 +95,7 @@ window.onload = getSeriesList;
 
 function showSerieInfo(idSerie) {
   let container = document.getElementById("container");
+  container.className = "serie-info-container";
   container.innerHTML = "<div class='go-back' onclick='returnToList();'>Series\n</div><h1 id='serie-title'></h1>\n<hr>";
   let serieTitle = document.getElementById("serie-title");
   
@@ -106,7 +107,7 @@ function showSerieInfo(idSerie) {
     serieTitle.innerText = data.name;
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
-    cover.setAttribute('alt', `Portada de ${data.name}`);+
+    cover.setAttribute('alt', `Portada de ${data.name}`);
     cover.id = "serie-poster";
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
@@ -146,10 +147,13 @@ function showSerieInfo(idSerie) {
 function returnToList() {
   page = 1;
   let container = document.getElementById("container");
+  container.className = "";
   container.innerHTML = `<select name="Filtro por género" id="genre-filter" onchange="genreFilter()">
   <option value="0">Selecciona un género</option>
   <option value="0">Todos</option>
   </select>
+  <input id="search" type="text" placeholder="Busca una serie">
+  <button onclick="searchSerie()">Buscar</button>
   <h1>Series</h1>
   <hr>
   <div id="series-list">
@@ -177,12 +181,12 @@ function returnToList() {
 //Esta función incrementa en 1 el valor de page, realizando una petición a la página siguiente de la api
 function showMore() {
   page++;
-  let searchValue = document.getElementById("search").value;
-  if (searchValue !== "") {
+  let searchValue = document.getElementById("search");
+  if (searchValue.value !== "") {
     searchSerie();
   } else {
     getSeriesList();
-  }  
+  }
 }
 
 
@@ -259,7 +263,9 @@ function searchSerie() {
     page = 1;
   }
   let list = document.getElementById("series-list");
-  list.innerHTML = "";
+  if (page === 1) {
+    list.innerHTML = "";
+  }
   search = document.getElementById("search").value;
   fetch(`https://api.themoviedb.org/3/search/tv?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&query=${search}&page=${page}&include_adult=false`)
     .then(response => {

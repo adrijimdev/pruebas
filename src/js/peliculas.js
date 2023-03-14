@@ -1,5 +1,6 @@
 let page = 1;
 let genre = 0;
+let search = "";
 
 function getMovieList() {
   let list = document.getElementById("movie-list");
@@ -119,6 +120,7 @@ window.onload = getMovieList;
 
 function showMovieInfo(idMovie) {
   let container = document.getElementById("container");
+  container.className = "movie-info-container";
   container.innerHTML = "<div class='go-back' onclick='returnToList();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
   let movieTitle = document.getElementById("movie-title");
   
@@ -174,10 +176,11 @@ function returnToList() {
   <option value="0">Selecciona un género</option>
   <option value="0">Todos</option>
   </select>
+  <input id="search" type="text" placeholder="Busca una serie">
+  <button onclick="searchSerie()">Buscar</button>
   <h1>Películas</h1>
   <hr>
   <div id="movie-list">
-
   </div>
   <div id="show-more" onclick="showMore()">Mostrar más</div>`;
   // getGenres();
@@ -199,7 +202,12 @@ function returnToList() {
 //Esta función incrementa en 1 el valor de page, realizando una petición a la página siguiente de la api
 function showMore() {
   page++;
-  getMovieList();
+  let searchValue = document.getElementById("search");
+  if (searchValue.value !== "") {
+    searchMovie();
+  } else {
+    getMovieList();
+  }
 }
 
 //Esta función disminuye en 1 el valor de page, realizando una petición a la página anterior de la api
@@ -269,4 +277,44 @@ function genreFilter() {
   list.innerHTML = "";
   getMovieList();
 }
-// export { idMovie };
+
+function searchMovie() {
+  if (search === "") {
+    page = 1;
+  }
+  let list = document.getElementById("movie-list");
+  if (page === 1) {
+    list.innerHTML = "";
+  }
+  search = document.getElementById("search").value;
+  fetch(`https://api.themoviedb.org/3/search/movie?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES&query=${search}&page=${page}&include_adult=false`)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {//Recibimos la respuesta de la api (data) y recorremos la lista que contiene (results) para mostrar las películas en el html
+      for (let i = 0; i < data.results.length; i++) {
+        let divMovie = document.createElement("div");
+        divMovie.className = "movie";
+        divMovie.id = data.results[i].id;
+        divMovie.onclick = function() {
+          showMovieInfo(data.results[i].id);
+        };
+        let img = document.createElement("img");
+        img.className = "poster";
+        img.src = `https://image.tmdb.org/t/p/w500${data.results[i].poster_path}`;
+        img.alt = `Póster de ${data.results[i].title}`;
+        let divMovieFooter = document.createElement("div");
+        divMovieFooter.className = "movie-footer";
+        let footerTitle = document.createElement("div");
+        footerTitle.className = "title";
+        footerTitle.innerText = data.results[i].title;
+        divMovieFooter.appendChild(footerTitle);
+        divMovie.appendChild(img);
+        divMovie.appendChild(divMovieFooter);
+        list.appendChild(divMovie);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
