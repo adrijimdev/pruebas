@@ -131,6 +131,7 @@ function showMovieInfo(idMovie) {
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
     cover.setAttribute('alt', `Portada de ${data.title}`);
+    cover.id = "poster";
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
     let releaseDate = document.createElement("p");
@@ -138,7 +139,10 @@ function showMovieInfo(idMovie) {
     releaseDate.innerText = `Fecha de estreno: ${data.release_date}`;
     additionalInfo.appendChild(releaseDate);
     let runtime = document.createElement("p");
-    runtime.innerText = `Duración: ${data.runtime} minutos`;
+    runtime.className = "runtime";
+    if (data.runtime > 0) {
+      runtime.innerText = `Duración aproximada episodio: ${data.runtime} minutos`;
+    }
     additionalInfo.appendChild(runtime);
     let genres = document.createElement("p");
     genres.className = "genres";

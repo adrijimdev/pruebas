@@ -106,7 +106,8 @@ function showSerieInfo(idSerie) {
     serieTitle.innerText = data.name;
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
-    cover.setAttribute('alt', `Portada de ${data.name}`);
+    cover.setAttribute('alt', `Portada de ${data.name}`);+
+    cover.id = "poster";
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
     let releaseDate = document.createElement("p");
@@ -114,7 +115,10 @@ function showSerieInfo(idSerie) {
     releaseDate.innerText = `Primera emisión: ${data.first_air_date}`;
     additionalInfo.appendChild(releaseDate);
     let runtime = document.createElement("p");
-    runtime.innerText = `Duración aproximada episodio: ${data.episode_run_time} minutos`;
+    runtime.className = "runtime";
+    if (data.episode_run_time > 0) {
+      runtime.innerText = `Duración aproximada episodio: ${data.episode_run_time} minutos`;
+    }
     additionalInfo.appendChild(runtime);
     let genres = document.createElement("p");
     genres.className = "genres";
