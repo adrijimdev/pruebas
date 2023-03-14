@@ -109,6 +109,8 @@ function showSerieInfo(idSerie) {
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
     cover.setAttribute('alt', `Portada de ${data.name}`);
     cover.id = "serie-poster";
+    let infoBody = document.createElement("div");
+    infoBody.id = "info-body";
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
     let releaseDate = document.createElement("p");
@@ -136,8 +138,9 @@ function showSerieInfo(idSerie) {
     overview.className = "sinopsis";
     overview.innerText = data.overview;
     container.appendChild(cover);
-    container.appendChild(additionalInfo);
-    container.appendChild(overview);
+    infoBody.appendChild(additionalInfo);
+    infoBody.appendChild(overview);
+    container.appendChild(infoBody);
   })
   .catch(error => {
     console.error(error);

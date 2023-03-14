@@ -134,6 +134,8 @@ function showMovieInfo(idMovie) {
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
     cover.setAttribute('alt', `Portada de ${data.title}`);
     cover.id = "movie-poster";
+    let infoBody = document.createElement("div");
+    infoBody.id = "info-body";
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
     let releaseDate = document.createElement("p");
@@ -161,8 +163,9 @@ function showMovieInfo(idMovie) {
     overview.className = "sinopsis";
     overview.innerText = data.overview;
     container.appendChild(cover);
-    container.appendChild(additionalInfo);
-    container.appendChild(overview);
+    infoBody.appendChild(additionalInfo);
+    infoBody.appendChild(overview);
+    container.appendChild(infoBody);
   })
   .catch(error => {
     console.error(error);
