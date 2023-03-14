@@ -95,7 +95,7 @@ window.onload = getSeriesList;
 
 function showSerieInfo(idSerie) {
   let container = document.getElementById("container");
-  container.innerHTML = "<div onclick='returnToList();'>Series\n</div><h1 id='serie-title'></h1>\n<hr>";
+  container.innerHTML = "<div class='go-back' onclick='returnToList();'>Series\n</div><h1 id='serie-title'></h1>\n<hr>";
   let serieTitle = document.getElementById("serie-title");
   
   fetch(`https://api.themoviedb.org/3/tv/${idSerie}?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
@@ -107,7 +107,7 @@ function showSerieInfo(idSerie) {
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
     cover.setAttribute('alt', `Portada de ${data.name}`);+
-    cover.id = "poster";
+    cover.id = "serie-poster";
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
     let releaseDate = document.createElement("p");

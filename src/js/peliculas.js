@@ -119,7 +119,7 @@ window.onload = getMovieList;
 
 function showMovieInfo(idMovie) {
   let container = document.getElementById("container");
-  container.innerHTML = "<div onclick='returnToList();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
+  container.innerHTML = "<div class='go-back' onclick='returnToList();'>Películas\n</div><h1 id='movie-title'></h1>\n<hr>";
   let movieTitle = document.getElementById("movie-title");
   
   fetch(`https://api.themoviedb.org/3/movie/${idMovie}?api_key=039e4f7f61c4c831908c02f8c3e9aba0&language=es-ES`)
@@ -131,7 +131,7 @@ function showMovieInfo(idMovie) {
     let cover = document.createElement("img");
     cover.setAttribute('src', `https://image.tmdb.org/t/p/w500${data.poster_path}`);
     cover.setAttribute('alt', `Portada de ${data.title}`);
-    cover.id = "poster";
+    cover.id = "movie-poster";
     let additionalInfo = document.createElement("div");
     additionalInfo.className = "additional-info";
     let releaseDate = document.createElement("p");
